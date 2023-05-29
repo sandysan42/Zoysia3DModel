@@ -23,7 +23,7 @@ for point in training_point:
     for ply_dir in dir_list:
         dir_name = str(ply_dir.relative_to(path))
         if dir_name == 'PLY_PLANT_TRAIN':
-            pot_dir = pathlib.Path(pathlib.Path.cwd(),'PLY_POT_TRAIN')
+            pot_dir = path/'PLY_POT_TRAIN'
             ply_list = list(ply_dir.glob('*.ply'))
             pot_ply_list = list(pot_dir.glob('*.ply'))
             for ply in ply_list:
@@ -60,7 +60,7 @@ for point in training_point:
                 
 
         if dir_name == 'PLY_PLANT_TEST':
-            pot_dir = pathlib.Path(pathlib.Path.cwd(),'PLY_POT_TEST')
+            pot_dir = path/'PLY_POT_TEST'
             ply_list = list(ply_dir.glob('*.ply'))
             pot_ply_list = list(pot_dir.glob('*.ply'))
             for ply in ply_list:
