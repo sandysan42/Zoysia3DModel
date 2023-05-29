@@ -34,9 +34,9 @@ def main():
             input_PLY = str(date_path)
             the_date = str(date_path.relative_to(ply_dir))
             date = the_date.split('_')[1]
-            data_tsv = pathlib.Path(pathlib.Path.cwd(),"TSV_DATA_FINAL",plant_ID,plant_ID+"_"+date+"_data.tsv")
-            topview_png = pathlib.Path(pathlib.Path.cwd(),"PNG_BIRDEYE_NEW",plant_ID,plant_ID+"_"+date+".png")
-            index_png = pathlib.Path(pathlib.Path.cwd(),"PNG_BIRDEYE_NEW",plant_ID,plant_ID+"_"+date+"_GRNDI.png")
+            data_csv_path = pathlib.Path(pathlib.Path.cwd(),"CSV_DATA","{}_data.csv".format(plant_ID))
+            topview_png = pathlib.Path(pathlib.Path.cwd(),"PNG_BIRDEYE",plant_ID,"{}_{}.png".format(plant_ID,date))
+            index_png = pathlib.Path(pathlib.Path.cwd(),"PNG_BIRDEYE",plant_ID,"{}_{}_GRNDI.png".format(plant_ID,date))
 
             pcd = o3d.io.read_point_cloud(str(input_PLY))
 
@@ -86,24 +86,22 @@ def main():
 
             index_img, NDI = color_calculation(pcd=pcd)
 
-            np_data=np.vstack([np_data,np.array(['plant height (with pot) (m)',max_height])])
-            np_data=np.vstack([np_data,np.array(['area(cm^2) (opencv2_contour)',area])])
-            np_data=np.vstack([np_data,np.array(['volumn (Voxel Count)',filled_vol])])
-            np_data=np.vstack([np_data,np.array(['GRNDI',NDI])])
+            write = [plant_ID,date,max_height,area,filled_vol,NDI]
 
             if len(array_point) == 0:
-                print(plant_ID + date + ' No points')
+                print('{} {} No points'.format(plant_ID,date))
             else:
-                data_tsv.parent.mkdir(parents = True,exist_ok=True)
-                out_tsv = pd.DataFrame(np_data)
-                out_tsv.to_csv(str(data_tsv),mode='w' ,sep='\t',header=False,index=False)
+                with open(data_csv_path, 'w',newline='\n') as file_object:
+                    file_write = csv.writer(file_object) 
+                    file_write.writerow(write)
+                    file_object.close() 
 
                 topview_png.parent.mkdir(parents = True,exist_ok=True)
                 cv2.imwrite(str(topview_png),img_color)
 
                 index_png.parent.mkdir(parents = True,exist_ok=True)
                 index_img.save(str(index_png))
-                print(plant_ID + date + " Done")
+                print("{} {} Done".format(plant_ID,date))
 
 if __name__ == "__main__":
     main()
